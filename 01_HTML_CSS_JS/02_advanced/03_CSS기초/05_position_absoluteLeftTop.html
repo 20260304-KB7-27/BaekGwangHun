@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      /*
+        nth-child : 가상 클래스 선택자
+        - 특정 순서의 자식 요소를 선택
+        */
+      .box {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+      }
+
+      .box:nth-child(1) {
+        background-color: red;
+        left: 10px;
+        top: 10px;
+      }
+      .box:nth-child(2) {
+        background-color: green;
+        left: 50px;
+        top: 50px;
+      }
+      .box:nth-child(3) {
+        background-color: blue;
+        left: 90px;
+        top: 90px;
+      }
+
+            .font_big {
+        font-size: 2em;
+      }
+      .font_italic {
+        font-style: italic;
+      }
+      .font_bold {
+        font-weight: bold;
+      }
+      .title_location {
+        text-align: center;
+      }
+
+      .date_location {
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    </div>
+  </body>
+</html>
