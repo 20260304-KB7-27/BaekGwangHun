@@ -8,8 +8,14 @@
   </head>
   <body>
     <div id="app">
-      <h1>📌 게시판 목록 v2</h1>
-
+      <h1>📌 게시판 목록 v3</h1>
+      <div style="text-align: center">
+        <input v-model="newTodoTitle" placeholder="새 게시글 제목" />
+        <input v-model="newTodoContent" placeholder="새 게시글 내용" />
+        <button @click="addPost">작성</button>
+        <br />
+        <br />
+      </div>
       <ul>
         <li
           v-for="(post, index) in posts"
@@ -30,19 +36,35 @@
             v-if="selectedPost && selectedPost.no === post.no"
             class="post-content"
           >
-            <p>{{ post.content }}</p>
-
-            <button @click.stop="closePost">닫기</button>
+            <div v-if="isEditing">
+              <input v-model="editTitle" @click.stop />
+              <input v-model="editContent" @click.stop />
+              <button @click.stop="saveEdit">저장</button>
+              <button @click.stop="cancleEdit">취소</button>
+            </div>
+            <div v-else>
+              <p>{{ post.content }}</p>
+              <button @click.stop="startEdit">수정</button>
+              <button @click.stop="deletePost">삭제</button>
+              <button @click.stop="closePost">닫기</button>
+            </div>
           </div>
         </li>
       </ul>
     </div>
 
     <script>
-      const { createApp, ref } = Vue;
+      const { createApp, ref, computed } = Vue;
 
       createApp({
         setup() {
+          const newTodoTitle = ref('');
+          const newTodoContent = ref('');
+
+          const isEditing = ref(false);
+          const editTitle = ref('');
+          const editContent = ref('');
+
           const posts = ref([
             {
               no: 1,
@@ -106,7 +128,18 @@
             },
           ]);
 
-          // 아래에 화면처럼 동작하도록 구현해보세요
+          const addPost = (e) => {
+            if (newTodoTitle.value === '') return;
+
+            posts.value.push({
+              no: posts.value.length + 1,
+              title: newTodoTitle.value,
+              content: newTodoContent.value,
+            });
+
+            newTodoTitle.value = '';
+            newTodoContent.value = '';
+          };
 
           const selectedPost = ref(null);
           const selectPost = (post) => {
@@ -121,11 +154,56 @@
             selectedPost.value = null;
           };
 
+          const sortedPosts = computed(() => {
+            return [...posts.value].sort((a, b) => b.no - a.no);
+          });
+
+          const startEdit = () => {
+            editTitle.value = selectedPost.value.title;
+            editContent.value = selectedPost.value.content;
+            isEditing.value = true;
+          };
+
+          const saveEdit = () => {
+            selectedPost.value.title = editTitle.value;
+            selectedPost.value.content = editContent.value;
+
+            isEditing.value = false;
+          };
+
+          const cancleEdit = () => {
+            isEditing.value = false;
+          };
+
+          const deletePost = () => {
+            if (!confirm('정말로 삭제하시겠습니까?')) return;
+
+            const index = posts.value.findIndex(
+              (post) => post.no === selectedPost.value.no,
+            );
+
+            if (index === -1) return;
+
+            posts.value.splice(index, 1);
+
+            selectedPost.value = null;
+          };
+
           return {
+            addPost,
             posts,
             selectPost,
             selectedPost,
             closePost,
+            newTodoTitle,
+            newTodoContent,
+            isEditing,
+            editTitle,
+            editContent,
+            startEdit,
+            saveEdit,
+            cancleEdit,
+            deletePost,
           };
         },
       }).mount('#app');
