@@ -12,7 +12,7 @@ import Home from '@/pages/Home.vue';
 
 const membersIdGuard = (to, from) => {
   // /members인 경우 /members/:id 에서만 /members/:id로 접근가능
-  if (from.name !== 'mmebers' && from.name !== 'members/id') {
+  if (from.name !== 'mebers' && from.name !== 'members/id') {
     return false;
   }
 };
@@ -36,6 +36,30 @@ const router = createRouter({
       name: '/members/id',
       component: () => import('@/pages/MemberInfo.vue'),
       beforeEnter: membersIdGuard,
+    },
+    {
+      /*
+      중첩 라우팅
+      - 부모 컴포넌트 안에 <RouterView>를 두고 children 배열로 자식 라우트를 정의
+      - 자식 컴포넌트는 부모의 <RouterView> 위치에 렌더링
+
+      */
+      path: '/members-nested',
+      component: () => import('@/pages/nested/MembersLayout.vue'),
+      children: [
+        {
+          //기본 값 /members-nested
+          path: '',
+          name: 'members-nested',
+          component: () => import('@/pages/nested/MemberDefault.vue'),
+        },
+        {
+          //기본 값 /members-nested
+          path: ':id',
+          name: 'members-nested/detail',
+          component: () => import('@/pages/nested/MemberDetail.vue'),
+        },
+      ],
     },
   ],
 });
